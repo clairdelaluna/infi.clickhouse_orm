@@ -11,7 +11,7 @@ from infi.clickhouse_orm.engines import *
 class ArrayFieldsTest(unittest.TestCase):
 
     def setUp(self):
-        self.database = Database('test-db')
+        self.database = Database('test-db', log_statements=True)
         self.database.create_table(ModelWithArrays)
 
     def tearDown(self):
@@ -48,10 +48,11 @@ class ArrayFieldsTest(unittest.TestCase):
                 instance.arr_int = value
 
     def test_parse_array(self):
-        from infi.clickhouse_orm.utils import parse_array, unescape
+        from src.infi.clickhouse_orm.utils import parse_array, unescape
         self.assertEqual(parse_array("[]"), [])
         self.assertEqual(parse_array("[1, 2, 395, -44]"), ["1", "2", "395", "-44"])
         self.assertEqual(parse_array("['big','mouse','','!']"), ["big", "mouse", "", "!"])
+        self.assertEqual(parse_array("['string with a \\\' and a ] special chars in an array']"), ["string with a ' and a ] special chars in an array"])
         self.assertEqual(parse_array(unescape("['\\r\\n\\0\\t\\b']")), ["\r\n\0\t\b"])
         for s in ("",
                   "[",

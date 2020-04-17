@@ -39,12 +39,12 @@ def unescape(value):
     return codecs.escape_decode(value)[0].decode('utf-8')
 
 
-def parse_tsv(line):
+def parse_tsv(line, do_unescape=False):
     if PY3 and isinstance(line, binary_type):
         line = line.decode()
     if line and line[-1] == '\n':
         line = line[:-1]
-    return [unescape(value) for value in line.split(str('\t'))]
+    return [unescape(value) if do_unescape else value for value in line.split(str('\t'))]
 
 
 def parse_array(array_string):
@@ -63,7 +63,7 @@ def parse_array(array_string):
     while True:
         if array_string == ']':
             # End of array
-            return values
+            break
         elif array_string[0] in ', ':
             # In between values
             array_string = array_string[1:]
@@ -72,13 +72,15 @@ def parse_array(array_string):
             match = re.search(r"[^\\]'", array_string)
             if match is None:
                 raise ValueError('Missing closing quote: "%s"' % array_string)
-            values.append(array_string[1 : match.start() + 1])
+            values.append(array_string[1: match.start() + 1])
             array_string = array_string[match.end():]
         else:
             # Start of non-quoted value, find its end
             match = re.search(r",|\]", array_string)
-            values.append(array_string[0 : match.start()])
+            values.append(array_string[0: match.start()])
             array_string = array_string[match.end() - 1:]
+
+    return [unescape(value) for value in values]
 
 
 def import_submodules(package_name):

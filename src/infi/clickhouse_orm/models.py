@@ -7,7 +7,7 @@ from six import with_metaclass, reraise, iteritems
 import pytz
 
 from .fields import Field, StringField
-from .utils import parse_tsv
+from .utils import parse_tsv, unescape
 from .query import QuerySet
 from .engines import Merge, Distributed
 
@@ -215,11 +215,14 @@ class Model(with_metaclass(ModelBase)):
         - `database`: if given, sets the database that this instance belongs to.
         '''
         from six import next
-        values = iter(parse_tsv(line))
+        values = iter(parse_tsv(line, do_unescape=False))
         kwargs = {}
         for name in field_names:
             field = getattr(cls, name)
-            kwargs[name] = field.to_python(next(values), timezone_in_use)
+            value = next(values)
+            if not isinstance(field, list) and not isinstance(field, ArrayField):
+                value = unescape(value)
+            kwargs[name] = field.to_python(value, timezone_in_use)
 
         obj = cls(**kwargs)
         if database is not None:
