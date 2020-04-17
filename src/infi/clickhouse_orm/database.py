@@ -4,7 +4,7 @@ import re
 import requests
 from collections import namedtuple
 from .models import ModelBase
-from .utils import escape, parse_tsv, import_submodules
+from .utils import escape, parse_tsv, import_submodules, unescape
 from math import ceil
 import datetime
 from string import Template
@@ -254,8 +254,8 @@ class Database(object):
         query = self._substitute(query, model_class)
         r = self._send(query, settings, True)
         lines = r.iter_lines()
-        field_names = parse_tsv(next(lines))
-        field_types = parse_tsv(next(lines))
+        field_names = parse_tsv(next(lines), do_unescape=True)
+        field_types = parse_tsv(next(lines), do_unescape=True)
         model_class = model_class or ModelBase.create_ad_hoc_model(zip(field_names, field_types))
         for line in lines:
             # skip blank line left by WITH TOTALS modifier

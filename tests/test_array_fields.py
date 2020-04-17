@@ -52,6 +52,7 @@ class ArrayFieldsTest(unittest.TestCase):
         self.assertEqual(parse_array("[]"), [])
         self.assertEqual(parse_array("[1, 2, 395, -44]"), ["1", "2", "395", "-44"])
         self.assertEqual(parse_array("['big','mouse','','!']"), ["big", "mouse", "", "!"])
+        self.assertEqual(parse_array("['string with a \\' and a ] special chars in an array']"), ["string with a ' and a ] special chars in an array"])
         self.assertEqual(parse_array(unescape("['\\r\\n\\0\\t\\b']")), ["\r\n\0\t\b"])
         for s in ("",
                   "[",
