@@ -6,7 +6,7 @@ from logging import getLogger
 from six import with_metaclass, reraise, iteritems
 import pytz
 
-from .fields import Field, StringField
+from .fields import Field, StringField, ArrayField
 from .utils import parse_tsv, unescape
 from .query import QuerySet
 from .engines import Merge, Distributed
