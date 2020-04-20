@@ -1,7 +1,7 @@
 
 SETUP_INFO = dict(
     name = 'infi.clickhouse_orm',
-    version = '1.0.42.post3',
+    version = '1.0.43.post3',
     author = 'Christopher',
     author_email = 'christopher.hz.thomas@cantab.net',
 
